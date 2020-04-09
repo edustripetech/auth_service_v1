@@ -4,25 +4,16 @@ import morgan from 'morgan';
 import { config } from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import fs from 'fs';
-import path from 'path';
+import winstonStream from './app/helpers/logger';
 import Routes from './app/routes';
 
 config();
-const app = express();
+
 const { log } = console;
 
-const logPath = path.join(__dirname, 'log', 'access.log');
+const app = express();
 
-if (!fs.existsSync(logPath)) {
-  fs.mkdirSync(path.dirname(logPath));
-  fs.writeFileSync(logPath, { flags: 'wx' });
-}
-
-app.use(morgan('common', {
-  stream: fs.createWriteStream(logPath, { flags: 'a' }),
-}));
-
+app.use(morgan('combined', { stream: winstonStream }));
 app.use(json());
 app.use(
   cors({
