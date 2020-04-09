@@ -7,6 +7,7 @@ export const development = {
 export const test = {
   use_env_variable: 'DB_URL_TEST',
   dialect: 'postgres',
+  logging: false,
 };
 
 export const production = {

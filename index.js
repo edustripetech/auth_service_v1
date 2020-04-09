@@ -4,13 +4,25 @@ import morgan from 'morgan';
 import { config } from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import fs from 'fs';
+import path from 'path';
 import Routes from './app/routes';
 
 config();
 const app = express();
 const { log } = console;
 
-app.use(morgan('combined'));
+const logPath = path.join(__dirname, 'log', 'access.log');
+
+if (!fs.existsSync(logPath)) {
+  fs.mkdirSync(path.dirname(logPath));
+  fs.writeFileSync(logPath, { flags: 'wx' });
+}
+
+app.use(morgan('common', {
+  stream: fs.createWriteStream(logPath, { flags: 'a' }),
+}));
+
 app.use(json());
 app.use(
   cors({
@@ -26,7 +38,7 @@ app.use((error, request, response, next) => {
   response.status(error.status || 500).json({
     message: error.message || 'Oops! something went wrong',
     code: error.code || 500,
-    data: error
+    data: error,
   });
   next();
 });
@@ -34,7 +46,7 @@ app.use((error, request, response, next) => {
 app.use('*', (request, response) => {
   response.status(404).send({
     message: 'Requested resource not found!',
-    code: 404
+    code: 404,
   });
 });
 
@@ -47,7 +59,10 @@ app.use(helmet());
  */
 const normalizePort = (val) => {
   const port = parseInt(val, 10);
-  return Number.isNaN(port) ? val : (port >= 0 ? port : false);
+  if (Number.isNaN(port)) {
+    return val;
+  }
+  return port >= 0 ? port : false;
 };
 
 const PORT = normalizePort(process.env.PORT || 5000);
