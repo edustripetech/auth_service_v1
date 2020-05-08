@@ -5,7 +5,7 @@ import { config } from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import winstonStream from './app/helpers/logger';
-import Routes from './app/routes';
+import routes from './app/routes';
 
 config();
 
@@ -23,7 +23,11 @@ app.use(
 
 app.use(cookieParser());
 app.use(urlencoded({ extended: false }));
-app.use(Routes);
+
+app.get('/', (request, response) => response.status(200)
+  .send('<h1>Welcome to Edustripe authentication service!</h1>'));
+
+app.use('/api/v1', routes);
 
 app.use((error, request, response, next) => {
   response.status(error.status || 500).json({
