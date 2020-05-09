@@ -15,6 +15,8 @@ const { log } = console;
 const app = express();
 
 app.use(morgan('combined', { stream: winstonStream }));
+
+app.use(helmet());
 app.use(json());
 app.use(
   cors({
@@ -36,8 +38,6 @@ app.use((error, req, res, next) => {
 });
 
 app.use('*', (req, res) => response.notFound(res));
-
-app.use(helmet());
 
 /**
  * Function to normalize port
