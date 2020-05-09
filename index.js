@@ -5,7 +5,8 @@ import { config } from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import winstonStream from './app/helpers/logger';
-import routes from './app/routes';
+import Routes from './app/routes';
+import response from './app/helpers/response';
 
 config();
 
@@ -24,26 +25,17 @@ app.use(
 app.use(cookieParser());
 app.use(urlencoded({ extended: false }));
 
-app.get('/', (request, response) => response.status(200)
+app.get('/', (req, res) => res.status(200)
   .send('<h1>Welcome to Edustripe authentication service!</h1>'));
 
-app.use('/api/v1', routes);
+app.use('/api/v1', Routes);
 
-app.use((error, request, response, next) => {
-  response.status(error.status || 500).json({
-    message: error.message || 'Oops! something went wrong',
-    code: error.code || 500,
-    data: error,
-  });
-  next();
+app.use((error, req, res, next) => {
+  if (res.headersSent) return next(error);
+  return response.error(res, error.status || 500, error, error.message || 'Internal Server Error');
 });
 
-app.use('*', (request, response) => {
-  response.status(404).send({
-    message: 'Requested resource not found!',
-    code: 404,
-  });
-});
+app.use('*', (req, res) => response.notFound(res));
 
 app.use(helmet());
 
