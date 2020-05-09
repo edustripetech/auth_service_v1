@@ -41,7 +41,7 @@ describe('Server Indexes', () => {
         response.should.have.status(404);
         body.code.should.equal(404);
         body.message.should.equal(
-          'Requested resource not found!',
+          'Requested resource not found',
         );
         done();
       });
