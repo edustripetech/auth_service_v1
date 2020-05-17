@@ -1,0 +1,27 @@
+{
+  "get": {
+    "security": [
+      {
+        "Bearer": []
+      }
+    ],
+    "tags": ["Auth Service Base Response"],
+    "summary": "Auth Service Base Response ",
+    "description": "Auth Service Base Response \n",
+    "produces": ["application/json"],
+    "responses": {
+      "200": {
+        "description": "Auth Service Base Successful Response",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string",
+              "example": "Welcome to Auth Service"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,8 +1,11 @@
-import express from 'express';
+import express from "express";
 
 const Routes = express.Router();
 
-Routes.get('/', (request, response) => response.status(200)
-  .send('<h1>Welcome to Edustripe authentication service!</h1>'));
+Routes.get("/", (request, response) =>
+  response.status(200).json({
+    message: "Welcome to Edustripe authentication service!",
+  })
+);
 
 export default Routes;
