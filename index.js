@@ -6,6 +6,8 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import winstonStream from './app/helpers/logger';
 import Routes from './app/routes';
+import response from './app/helpers/response';
+import env from './app/config/env';
 
 config();
 
@@ -14,6 +16,8 @@ const { log } = console;
 const app = express();
 
 app.use(morgan('combined', { stream: winstonStream }));
+
+app.use(helmet());
 app.use(json());
 app.use(
   cors({
@@ -23,25 +27,18 @@ app.use(
 
 app.use(cookieParser());
 app.use(urlencoded({ extended: false }));
-app.use(Routes);
 
-app.use((error, request, response, next) => {
-  response.status(error.status || 500).json({
-    message: error.message || 'Oops! something went wrong',
-    code: error.code || 500,
-    data: error,
-  });
-  next();
+app.get('/', (req, res) => res.status(200)
+  .send('<h1>Welcome to Edustripe authentication service!</h1>'));
+
+app.use('/api/v1', Routes);
+
+app.use((error, req, res, next) => {
+  if (res.headersSent) return next(error);
+  return response.error(res, error.status || 500, error, error.message || 'Internal Server Error');
 });
 
-app.use('*', (request, response) => {
-  response.status(404).send({
-    message: 'Requested resource not found!',
-    code: 404,
-  });
-});
-
-app.use(helmet());
+app.use('*', (req, res) => response.notFound(res));
 
 /**
  * Function to normalize port
@@ -56,7 +53,7 @@ const normalizePort = (val) => {
   return port >= 0 ? port : false;
 };
 
-const PORT = normalizePort(process.env.PORT || 5000);
+const PORT = normalizePort(env.PORT || 5000);
 
 app.listen(PORT, () => {
   log(`Server running on Port ${PORT}`);
