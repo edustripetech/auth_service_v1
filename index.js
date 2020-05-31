@@ -13,6 +13,7 @@ const { log } = console;
 
 const app = express();
 
+app.use(helmet());
 app.use(morgan('combined', { stream: winstonStream }));
 app.use(json());
 app.use(
@@ -40,8 +41,6 @@ app.use('*', (request, response) => {
     code: 404,
   });
 });
-
-app.use(helmet());
 
 /**
  * Function to normalize port
