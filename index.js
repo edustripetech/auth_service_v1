@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 import winstonStream from './app/helpers/logger';
 import Routes from './app/routes';
 import response from './app/helpers/response';
+import env from './app/config/env';
 
 config();
 
@@ -52,7 +53,7 @@ const normalizePort = (val) => {
   return port >= 0 ? port : false;
 };
 
-const PORT = normalizePort(process.env.PORT || 5000);
+const PORT = normalizePort(env.PORT || 5000);
 
 app.listen(PORT, () => {
   log(`Server running on Port ${PORT}`);
