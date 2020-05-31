@@ -59,5 +59,8 @@ typings/
 
 # next.js build output
 .next
-
 .idea/
+
+# VSCode config files
+.vscode/
+*.code-workspace
