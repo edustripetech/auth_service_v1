@@ -6,10 +6,11 @@ import cache, { redisClient } from '../helpers/cache';
 const routes = express.Router();
 
 routes.get('/', (req, res) => response.ok(res, {}, 'Welcome to Edustripe authentication service!'));
-Routes.get('/', cache, (request, response) => {
+
+routes.get('/', cache, (req, res) => {
   const data = '<h1>Welcome to Edustripe authentication service!</h1>';
-  redisClient.setex(`${request.method} ${request.url}`, 3600, data);
-  return response.status(200).send(data);
+  redisClient.setex(`${req.method} ${req.url}`, 3600, data);
+  return res.status(200).send(data);
 });
 
 
