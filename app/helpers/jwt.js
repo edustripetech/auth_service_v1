@@ -6,7 +6,6 @@ import jwtConf from '../config/jwt';
  * @type {{renewAccessToken: renewAccessToken, generateTokens:(function(Object): {access: string, refresh: string})}}
  */
 const JWT = (() => {
-  const refreshTokenList = {};
   /**
    * @name makeToken
    * @param {Object} user
@@ -63,7 +62,6 @@ const JWT = (() => {
   const generateTokens = (user) => {
     const access = makeToken(user);
     const refresh = makeToken(user, jwtConf.REFRESH_TOKEN_LIFESPAN);
-    refreshTokenList[refresh] = access;
     return { access, refresh };
   };
 
@@ -85,14 +83,8 @@ const JWT = (() => {
       throw errorObject;
     }
     const user = await JWT.verifyToken(refreshToken, false);
-    if (
-      refreshToken in refreshTokenList
-      && refreshTokenList[refreshToken] === oldToken
-      && user
-      && user.id
-    ) {
+    if (user && user.id) {
       const token = makeToken(user);
-      refreshTokenList[refreshToken] = token;
       return [token, user];
     }
     errorObject.subCode = 3;

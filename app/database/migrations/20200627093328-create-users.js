@@ -12,7 +12,12 @@ module.exports = {
       allowNull: false,
     },
     userType: {
-      type: Sequelize.ENUM('Student_Guardian', 'School_Admin', 'School_Staff', 'School_Student'),
+      type: Sequelize.ENUM(
+        'Student_Guardian',
+        'School_Admin',
+        'School_Staff',
+        'School_Student',
+      ),
       allowNull: false,
     },
     gender: { type: Sequelize.STRING },

@@ -5,9 +5,12 @@ import { config } from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import winstonStream from './app/helpers/logger';
-import Routes from './app/routes';
+import routes from './app/routes';
 import response from './app/helpers/response';
 import env from './app/config/env';
+import corsOptions from './app/config/cors';
+import refreshTokenOnExpire from './app/middlewares/refreshTokenOnExpire';
+import decodeUser from './app/middlewares/decodeUser';
 
 config();
 
@@ -20,9 +23,7 @@ app.use(morgan('combined', { stream: winstonStream }));
 app.use(helmet());
 app.use(json());
 app.use(
-  cors({
-    credentials: true, // In other to receive cookie and other credential from cross origin
-  }),
+  cors(corsOptions),
 );
 
 app.use(cookieParser());
@@ -31,7 +32,7 @@ app.use(urlencoded({ extended: false }));
 app.get('/', (req, res) => res.status(200)
   .send('<h1>Welcome to Edustripe authentication service!</h1>'));
 
-app.use('/api/v1', Routes);
+app.use('/api/v1', decodeUser, refreshTokenOnExpire, routes);
 
 app.use((error, req, res, next) => {
   if (res.headersSent) return next(error);

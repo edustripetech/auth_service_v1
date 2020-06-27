@@ -1,5 +1,6 @@
 import response from '../helpers/response';
-import authHelper from '../helpers/auth';
+import authHelper, { getBaseDomainFromUrl } from '../helpers/auth';
+import env from '../config/env';
 
 /**
  * @name signUp
@@ -9,7 +10,8 @@ import authHelper from '../helpers/auth';
  */
 const signUp = async (req, res) => {
   const user = req.body;
-  const cookieDomain = req.get('referer');
+  let cookieDomain = req.get('referer') || env.APP_URL;
+  cookieDomain = getBaseDomainFromUrl(cookieDomain);
   try {
     const reply = await authHelper.signUp(user);
     if (reply) {
@@ -18,14 +20,12 @@ const signUp = async (req, res) => {
         reply.user,
         cookieDomain,
       );
-      return response.ok(res, reply.user);
+      return response.created(res, reply.user);
     }
     return response.error(res, 500);
   } catch (e) {
-    if (e.code === 401) {
-      return response.unAuthorize(res, e);
-    }
-    return response.error(res, 500, e);
+    const code = (e && e.code) || 500;
+    return response.error(res, 500, e, code, e && e.message);
   }
 };
 
