@@ -1,5 +1,5 @@
 import jwtHelper from '../helpers/jwt';
-import { getTokensFromRequest, setTokensToResponse } from '../helpers/auth';
+import {getCookieDomain, getTokensFromRequest, setTokensToResponse} from '../helpers/auth';
 
 /**
  * @name refreshTokenOnExpire
@@ -16,7 +16,7 @@ const refreshTokenOnExpire = async (req, res, next) => {
         accessToken,
         refreshToken,
       );
-      setTokensToResponse(res, { access: newToken });
+      setTokensToResponse(res, { access: newToken }, getCookieDomain(req));
       req.newAccessToken = newToken;
       req.user = user;
     } catch (e) {

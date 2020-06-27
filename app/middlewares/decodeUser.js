@@ -11,14 +11,7 @@ import { getTokensFromRequest } from '../helpers/auth';
 const decodeUser = async (req, res, next) => {
   const { accessToken } = getTokensFromRequest(req);
   try {
-    if (!accessToken) {
-      req.authError = {
-        code: 401,
-        subCode: 0,
-        message: 'Unauthorized: Access token not found!',
-      };
-    }
-    if (accessToken) req.user = await jwtHelper.verifyToken(accessToken, false);
+    req.user = await jwtHelper.verifyToken(accessToken, false);
   } catch (e) {
     req.authError = e;
   }

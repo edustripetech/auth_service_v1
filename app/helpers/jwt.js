@@ -22,15 +22,18 @@ const JWT = (() => {
    * @return {Object} the user object
    */
   const verifyToken = (token, includeSignature = true) => {
+    const errorObject = {
+      code: 401,
+      subCode: 0,
+      message: 'Unauthorized: token not found!',
+    };
+    if (!token) {
+      throw errorObject;
+    }
     let user;
     return jwt.verify(token, jwtConf.SECRET_KEY, (err, decoded) => {
       if (err) {
-        const errorObject = {
-          code: 401,
-          subCode: 0,
-          message: 'Unauthorized!',
-          stack: err.stack,
-        };
+        errorObject.stack = err.stack;
         switch (err.name) {
           case 'TokenExpiredError':
             errorObject.message = 'Supplied token has expired!';

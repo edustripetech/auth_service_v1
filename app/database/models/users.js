@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 module.exports = (sequelize, DataTypes) => {
   const Users = sequelize.define('Users', {
@@ -28,12 +28,12 @@ module.exports = (sequelize, DataTypes) => {
     paranoid: true,
   });
   Users.beforeCreate((user) => {
-    user.id = uuid();
+    user.id = uuidv4();
   });
   Users.getDetail = function getDetail(user, withCredential = false) {
     const where = user && user.id ? { id: user.id } : { email: user.email };
     let include = []; // Add all models to be included here
-    if (withCredential) include = include.concat('Credentials');
+    if (withCredential) include = include.concat('credential');
     return this.findOne({
       where,
       include,

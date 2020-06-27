@@ -21,6 +21,9 @@ module.exports = {
       allowNull: false,
       type: Sequelize.DATE,
     },
+    deletedAt: {
+      type: Sequelize.DATE,
+    },
   }),
   down: (queryInterface) => queryInterface.dropTable('Credentials'),
 };

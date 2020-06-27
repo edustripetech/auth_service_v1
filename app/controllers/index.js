@@ -1,6 +1,5 @@
 import response from '../helpers/response';
-import authHelper, { getBaseDomainFromUrl } from '../helpers/auth';
-import env from '../config/env';
+import authHelper, { getCookieDomain } from '../helpers/auth';
 
 /**
  * @name signUp
@@ -10,9 +9,8 @@ import env from '../config/env';
  */
 const signUp = async (req, res) => {
   const user = req.body;
-  let cookieDomain = req.get('referer') || env.APP_URL;
-  cookieDomain = getBaseDomainFromUrl(cookieDomain);
   try {
+    const cookieDomain = getCookieDomain(req);
     const reply = await authHelper.signUp(user);
     if (reply) {
       authHelper.handlePostAuth(
@@ -36,9 +34,9 @@ const signUp = async (req, res) => {
  * @return {Object} User object
  */
 const signIn = async (req, res) => {
-  const cookieDomain = req.get('referer');
   const user = req.body;
   try {
+    const cookieDomain = getCookieDomain(req);
     const reply = await authHelper.signIn(user);
     if (reply) {
       authHelper.handlePostAuth(
@@ -50,10 +48,8 @@ const signIn = async (req, res) => {
     }
     return response.error(res, 500);
   } catch (e) {
-    if (e.code === 401) {
-      return response.unAuthorize(res, e);
-    }
-    return response.error(res, 500, e);
+    const code = (e && e.code) || 500;
+    return response.error(res, 500, e, code, e && e.message);
   }
 };
 
