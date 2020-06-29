@@ -66,14 +66,14 @@ export const setTokensToResponse = (res, tokens, cookieDomain = '') => {
   const cookieLife = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000); // Expires in two weeks
   if (tokens.access) {
     res.cookie('accessToken', tokens.access, {
-      cookieDomain,
+      domain: cookieDomain,
       expires: cookieLife,
     });
     res.set('Authorization', `Bearer ${tokens.access}`);
   }
   if (tokens.refresh) {
     res.cookie('refreshToken', tokens.refresh, {
-      cookieDomain,
+      domain: cookieDomain,
       expires: cookieLife,
     });
     res.set('X-REFRESH-TOKEN', `Bearer ${tokens.refresh}`);
