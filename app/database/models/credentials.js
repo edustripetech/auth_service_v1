@@ -13,6 +13,11 @@ module.exports = (sequelize, DataTypes) => {
             throw new Error('Password length must be greater than or equal to 8 characters.');
           }
         },
+        alphanumeric(value) {
+          if (!/^(?=.*[0-9])(?=.*[a-zA-Z])(?=\S+$).*$/.test(value)) {
+            throw new Error('Password must contain at least one alphabet and one number');
+          }
+        },
       },
     },
     userId: { type: DataTypes.UUID, allowNull: false },

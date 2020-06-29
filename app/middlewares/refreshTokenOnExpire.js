@@ -1,5 +1,5 @@
 import jwtHelper from '../helpers/jwt';
-import {getCookieDomain, getTokensFromRequest, setTokensToResponse} from '../helpers/auth';
+import { getCookieDomain, getTokensFromRequest, setTokensToResponse } from '../helpers/auth';
 
 /**
  * @name refreshTokenOnExpire

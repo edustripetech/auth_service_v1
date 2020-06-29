@@ -21,7 +21,7 @@ describe('Authentication tests', () => {
     firstName: faker.name.firstName(),
     lastName: faker.name.lastName(),
     userType: faker.random.arrayElement(userTypes),
-    password: 'ade4samuel',
+    password: '1234567890dy&%$#',
   };
   /**
    * @name authExpectations
