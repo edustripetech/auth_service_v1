@@ -13,7 +13,6 @@ routes.get('/', cache, (req, res) => {
   return res.status(200).send(data);
 });
 
-
 routes.post('/auth/sign-up', controllers.signUp);
 
 routes.post('/auth/sign-in', controllers.signIn);

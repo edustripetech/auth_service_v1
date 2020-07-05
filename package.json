@@ -8,10 +8,10 @@
     "start": "node dist/index.js",
     "lint": "eslint . --fix",
     "dev": "cross-env NODE_ENV=development nodemon --exec babel-node index.js",
-    "test": "cross-env NODE_ENV=test npm run db:refresh && cross-env NODE_ENV=test nyc mocha --require @babel/register --exit",
+    "test": "cross-env NODE_ENV=test yarn run db:refresh && cross-env NODE_ENV=test nyc mocha --require @babel/register --exit",
     "db:migrate": "sequelize db:migrate",
     "db:migrate:undo": "sequelize db:migrate:undo:all",
-    "db:refresh": "npm run db:migrate:undo && npm run db:migrate && npm run db:seed",
+    "db:refresh": "yarn run db:migrate:undo && yarn run db:migrate && yarn run db:seed",
     "db:seed": "sequelize db:seed:all"
   },
   "repository": {

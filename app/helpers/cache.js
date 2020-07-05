@@ -1,8 +1,9 @@
 import redis from 'redis';
+import env from '../config/env';
 
-const REDIS_PORT = process.env.REDIS_PORT || 6379;
+const REDIS_URL = env.REDIS_URL || 'redis://127.0.0.1:6379';
 
-export const redisClient = redis.createClient(REDIS_PORT);
+export const redisClient = redis.createClient(REDIS_URL);
 
 /**
  * @function cache
