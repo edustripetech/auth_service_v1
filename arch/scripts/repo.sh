@@ -6,10 +6,10 @@ set -o pipefail
 GIT_OAUTH2_USER="${GIT_OAUTH2_USER:-oauth2}"
 GIT_BRANCH="${GIT_BRANCH:-master}"
 
-ACTION="${1:-setup}"
+ACTION="${1:-init}"
 shift
 
-VALID_ACTIONS=("checkout" "pull" "clone" "reset" "status" "setup")
+VALID_ACTIONS=("checkout" "pull" "clone" "reset" "status" "init")
 if [[ ! " ${VALID_ACTIONS[*]} " == *" $ACTION "* ]]; then
     printf '>>ERROR: invalid action %s \nAction is the first argument and can only be any of:\n %s\n' "$ACTION" "$(IFS=, ; echo "${VALID_ACTIONS[*]}")" >&2
     exit 1
@@ -51,11 +51,6 @@ done
 
 if [ -z "$APP_WORKSPACE" ]; then
   echo ">>Need to set APP_NAME env variable";exit 1
-elif [ -d "$APP_WORKSPACE" ]; then
-  echo ">>Changing directory to $APP_WORKSPACE"
-  cd "$APP_WORKSPACE"
-else
-  echo ">>Workspace directory $APP_WORKSPACE doesn't exist";exit 1
 fi
 
 if [ -z "$FULL_GIT_URL" ]; then
@@ -83,9 +78,10 @@ checkout ()
 pull ()
 {
   echo ">>Changing directory to $WORKING_DIR/$APP_WORKSPACE"
-  cd "$WORKING_DIR/$APP_WORKSPACE" || echo ">>Directory $WORKING_DIR/$APP_WORKSPACE does not exits" && exit 1
+  cd "$WORKING_DIR/$APP_WORKSPACE" || exit 1
   echo ">>Pulling latest changes from branch $GIT_BRANCH into $WORKING_DIR/$APP_WORKSPACE"
   git pull $FULL_GIT_URL $GIT_BRANCH
+  checkout
 }
 
 clone ()
@@ -96,13 +92,14 @@ clone ()
   git clone $FULL_GIT_URL "$WORKING_DIR/$APP_WORKSPACE"
   if [ -d "$WORKING_DIR/$APP_WORKSPACE/.git" ]; then
     echo ">>Successfull clone $REPOSITORY_URL"
+    checkout
   else
     echo ">>Error occurred, could not clone $REPOSITORY_URL, Exiting..."
     exit 1
   fi
 }
 
-setup ()
+init ()
 {
   if [ -d "$WORKING_DIR/$APP_WORKSPACE" ]; then
     if [ -d "$WORKING_DIR/$APP_WORKSPACE/.git" ]; then
@@ -150,6 +147,6 @@ elif [ "$ACTION" == "reset" ]; then
   fi
 elif [ "$ACTION" == "status" ]; then
   status
-elif [ "$ACTION" == "setup" ]; then
-  setup
+elif [ "$ACTION" == "init" ]; then
+  init
 fi
