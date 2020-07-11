@@ -29,12 +29,12 @@ $ yarn run dev
 Ensure you have docker and docker-compose installed on your machine, then run
 ```bash
 $ docker-compose build
-$ docker-compose up -d app
+$ docker-compose up -d account
 ```
 
 ## Run test with docker
 Ensure you have docker and docker-compose installed on your machine, then run
 ```bash
 $ docker-compose build
-$ docker-compose run -e APP_ENV=test app 
+$ docker-compose run -e APP_ENV=test account 
 ```
