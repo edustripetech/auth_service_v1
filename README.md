@@ -2,6 +2,8 @@
 
 This repository houses the Edustripe Authentication API
 
+[![Build Status](https://travis-ci.org/edustripetech/auth_service_v1.svg?branch=develop)](https://travis-ci.org/edustripetech/auth_service_v1)
+
 ## Technologies
 [Node](https://nodejs.org/en/)
 

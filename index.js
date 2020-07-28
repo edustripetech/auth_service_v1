@@ -15,6 +15,7 @@ const { log } = console;
 
 const app = express();
 
+app.use(helmet());
 app.use(morgan('combined', { stream: winstonStream }));
 
 app.use(helmet());
