@@ -6,7 +6,6 @@ import jwtConf from '../config/jwt';
  * @type {{renewAccessToken: renewAccessToken, generateTokens:(function(Object): {access: string, refresh: string})}}
  */
 const JWT = (() => {
-  const refreshTokenList = {};
   /**
    * @name makeToken
    * @param {Object} user
@@ -23,15 +22,18 @@ const JWT = (() => {
    * @return {Object} the user object
    */
   const verifyToken = (token, includeSignature = true) => {
+    const errorObject = {
+      code: 401,
+      subCode: 0,
+      message: 'Unauthorized: token not found!',
+    };
+    if (!token) {
+      throw errorObject;
+    }
     let user;
     return jwt.verify(token, jwtConf.SECRET_KEY, (err, decoded) => {
       if (err) {
-        const errorObject = {
-          code: 401,
-          subCode: 0,
-          message: 'Unauthorized!',
-          stack: err.stack,
-        };
+        errorObject.stack = err.stack;
         switch (err.name) {
           case 'TokenExpiredError':
             errorObject.message = 'Supplied token has expired!';
@@ -63,7 +65,6 @@ const JWT = (() => {
   const generateTokens = (user) => {
     const access = makeToken(user);
     const refresh = makeToken(user, jwtConf.REFRESH_TOKEN_LIFESPAN);
-    refreshTokenList[refresh] = access;
     return { access, refresh };
   };
 
@@ -85,14 +86,8 @@ const JWT = (() => {
       throw errorObject;
     }
     const user = await JWT.verifyToken(refreshToken, false);
-    if (
-      refreshToken in refreshTokenList
-      && refreshTokenList[refreshToken] === oldToken
-      && user
-      && user.id
-    ) {
+    if (user && user.id) {
       const token = makeToken(user);
-      refreshTokenList[refreshToken] = token;
       return [token, user];
     }
     errorObject.subCode = 3;

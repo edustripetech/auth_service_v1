@@ -1,5 +1,5 @@
 import response from '../helpers/response';
-import authHelper from '../helpers/auth';
+import authHelper, { getCookieDomain } from '../helpers/auth';
 
 /**
  * @name signUp
@@ -9,8 +9,8 @@ import authHelper from '../helpers/auth';
  */
 const signUp = async (req, res) => {
   const user = req.body;
-  const cookieDomain = req.get('referer');
   try {
+    const cookieDomain = getCookieDomain(req);
     const reply = await authHelper.signUp(user);
     if (reply) {
       authHelper.handlePostAuth(
@@ -18,14 +18,12 @@ const signUp = async (req, res) => {
         reply.user,
         cookieDomain,
       );
-      return response.ok(res, reply.user);
+      return response.created(res, reply.user);
     }
     return response.error(res, 500);
   } catch (e) {
-    if (e.code === 401) {
-      return response.unAuthorize(res, e);
-    }
-    return response.error(res, 500, e);
+    const code = (e && e.code) || 500;
+    return response.error(res, 500, e, code, e && e.message);
   }
 };
 
@@ -36,9 +34,9 @@ const signUp = async (req, res) => {
  * @return {Object} User object
  */
 const signIn = async (req, res) => {
-  const cookieDomain = req.get('referer');
   const user = req.body;
   try {
+    const cookieDomain = getCookieDomain(req);
     const reply = await authHelper.signIn(user);
     if (reply) {
       authHelper.handlePostAuth(
@@ -50,10 +48,8 @@ const signIn = async (req, res) => {
     }
     return response.error(res, 500);
   } catch (e) {
-    if (e.code === 401) {
-      return response.unAuthorize(res, e);
-    }
-    return response.error(res, 500, e);
+    const code = (e && e.code) || 500;
+    return response.error(res, 500, e, code, e && e.message);
   }
 };
 
