@@ -77,6 +77,17 @@ const badRequest = (res, errorDetail = {}, code = null) => error(
   res, 400, errorDetail, code, 'Could not understand request',
 );
 
+/**
+ * @method internalServer
+ * @param {object} res - Express response object
+ * @param {object | String} errorDetail - Error detail to be return as part of response body
+ * @param {Number | null} code - The specific app error code which default to status
+ * @returns {json} Formatted JSON server response
+ */
+const internalServer = (res, errorDetail = {}, code = null) => error(
+  res, 500, errorDetail, code, 'Oops! Something went wrong',
+);
+
 export default {
   ok,
   success,
@@ -85,4 +96,5 @@ export default {
   notFound,
   unAuthorize,
   badRequest,
+  internalServer,
 };

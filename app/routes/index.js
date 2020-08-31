@@ -1,7 +1,9 @@
 import express from 'express';
 import response from '../helpers/response';
 import controllers from '../controllers';
+import userRoute from './user';
 import cache, { redisClient } from '../helpers/cache';
+import guard from '../middlewares/guard';
 
 const routes = express.Router();
 
@@ -13,9 +15,10 @@ routes.get('/', cache, (req, res) => {
   return res.status(200).send(data);
 });
 
-
 routes.post('/auth/sign-up', controllers.signUp);
 
 routes.post('/auth/sign-in', controllers.signIn);
+
+routes.use('/users', guard.requireAuthentication, userRoute);
 
 export default routes;

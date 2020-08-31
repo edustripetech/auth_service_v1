@@ -1,13 +1,13 @@
 import response from '../helpers/response';
 
 /**
- * @name requiresUserId
+ * @name requireAuthentication
  * @param {Object} req Express request Object
  * @param {Object} res Express response Object
  * @param {Function} next Express next function
  * @returns {json} Response
  */
-const requiresUserId = (req, res, next) => {
+const requireAuthentication = (req, res, next) => {
   if (!(req.user || {}).id) {
     return response.unAuthorize(res, req.authError || {}, 1);
   }
@@ -15,5 +15,5 @@ const requiresUserId = (req, res, next) => {
 };
 
 export default {
-  requiresUserId,
+  requireAuthentication,
 };
