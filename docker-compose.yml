@@ -1,0 +1,45 @@
+version: '3'
+services:
+  account:
+    build: .
+    ports:
+      - ${PORT:-5000}:${PORT:-5000}
+    volumes:
+      - ./:/var/www/account-service
+    env_file:
+      - ./.env
+    environment:
+      - APP_ENV=local
+      - PORT=5000
+      - UNDO_MIGRATION_ON_STARTUP=0
+      - REDIS_URL=redis://edustripe_account_service_cache
+      - DB_URL=postgres://edustripe:test@edustripe_account_service_db/edustripe_account
+      - DB_URL_TEST=postgres://edustripe:test@edustripe_account_service_db/edustripe_account_test
+      - APP_NAME=account-service
+      - GIT_BRANCH=development
+    container_name: edustripe_account_service
+    depends_on:
+      - db
+      - cache
+
+  db:
+    image: postgres:alpine
+    ports:
+      - ${POSTGRES_HOST_PORT:-5433}:5432
+    volumes:
+      - ./arch/db/setup-test-db.sql:/docker-entrypoint-initdb.d/setup-test-db.sql
+      - ./db-backup/:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_HOST_PORT=5433
+      - POSTGRES_USER=edustripe
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=edustripe_account
+    container_name: edustripe_account_service_db
+
+  cache:
+    image: redis:alpine
+    ports:
+      - ${REDIS_HOST_PORT:-6380}:6379
+    environment:
+      - REDIS_HOST_PORT=6380
+    container_name: edustripe_account_service_cache
