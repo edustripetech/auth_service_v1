@@ -63,3 +63,6 @@ typings/
 # VSCode config files
 .vscode/
 *.code-workspace
+
+# Backups
+db-backup/
