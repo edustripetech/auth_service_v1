@@ -164,7 +164,7 @@ const signIn = async (user) => {
     );
   }
   if (!isCredentialValid) {
-    errorObject.message = 'Username or password incorrect!';
+    errorObject.message = 'Email or password incorrect!';
     throw errorObject;
   }
   reply.user = existingUser.get({ plain: true });

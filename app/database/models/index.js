@@ -3,6 +3,7 @@ import path from 'path';
 import Sequelize from 'sequelize';
 import { config } from 'dotenv';
 import * as dbConfig from '../config/config';
+import utility from '../../helpers/utility';
 
 config();
 
@@ -22,6 +23,7 @@ fs.readdirSync(__dirname)
   });
 
 Object.keys(db).forEach((modelName) => {
+  db[modelName].paginate = utility.paginate(db[modelName]);
   if (db[modelName].associate) {
     db[modelName].associate(db);
   }
