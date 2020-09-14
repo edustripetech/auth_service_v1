@@ -39,11 +39,7 @@ const signIn = async (req, res) => {
     const cookieDomain = getCookieDomain(req);
     const reply = await authHelper.signIn(user);
     if (reply) {
-      authHelper.handlePostAuth(
-        res,
-        reply.user,
-        cookieDomain,
-      );
+      authHelper.handlePostAuth(res, reply.user, cookieDomain);
       return response.ok(res, reply.user);
     }
     return response.error(res, 500);
