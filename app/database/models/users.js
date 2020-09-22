@@ -7,7 +7,6 @@ module.exports = (sequelize, DataTypes) => {
     lastName: { type: DataTypes.STRING, allowNull: false },
     email: {
       type: DataTypes.STRING,
-      allowNull: false,
       validate: { isEmail: true },
     },
     userType: {
@@ -32,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
   });
   Users.getDetail = function getDetail(user, withCredential = false) {
     const where = user && user.id ? { id: user.id } : { email: user.email };
-    let include = []; // Add all models to be included here
+    let include = ['profile']; // Add all models to be included here
     if (withCredential) include = include.concat('credential');
     return this.findOne({
       where,
@@ -45,11 +44,28 @@ module.exports = (sequelize, DataTypes) => {
   Users.getDetailByEmail = function getDetailByEmail(email, withCredential = false) {
     return this.getDetail({ email }, withCredential);
   };
+  Users.getWardByDetails = function getDetailByEmail(obj, withCredential = false) {
+    let include = ['profile']; // Add all models to be included here
+    if (withCredential) include = include.concat('credential');
+    return this.findOne({
+      where: { ...obj },
+      include,
+    });
+  };
+
   Users.associate = function associations(models) {
     // associations can be defined here
     Users.hasOne(models.Credentials, {
       foreignKey: 'userId',
       as: 'credential',
+    });
+    Users.hasOne(models.Profiles, {
+      foreignKey: 'userId',
+      as: 'profile',
+    });
+    Users.hasMany(models.Profiles, {
+      foreignKey: 'parentId',
+      as: 'parent',
     });
   };
   return Users;
