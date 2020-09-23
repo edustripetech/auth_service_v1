@@ -6,12 +6,9 @@ import EmailService from '../services/EmailServices';
  * @return {Object} JSON response
  */
 const sendTestMail = async (req, res) => {
+  const { name, email } = req.params;
   try {
-    await new EmailService().sendTestMail(
-      'Emeka',
-      'test',
-      'emekaofe22@gmail.com'
-    );
+    await new EmailService().sendTestMail(name, 'test', email);
     return res.send({ message: 'Email Sent' });
   } catch (error) {
     console.log(error);
