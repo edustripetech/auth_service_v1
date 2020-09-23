@@ -2,6 +2,8 @@ import express from 'express';
 import response from '../helpers/response';
 import controllers from '../controllers';
 import userRoute from './user';
+import profileRoute from './profile';
+import wardRoute from './ward';
 import emailRoute from './email';
 import cache, { redisClient } from '../helpers/cache';
 import guard from '../middlewares/guard';
@@ -23,5 +25,11 @@ routes.post('/auth/sign-up', controllers.signUp);
 routes.post('/auth/sign-in', controllers.signIn);
 
 routes.use('/users', guard.requireAuthentication, userRoute);
+
+routes.use('/profiles', guard.requireAuthentication, profileRoute);
+
+routes.use('/wards', guard.requireAuthentication, wardRoute);
+
 routes.use('/email', emailRoute);
+
 export default routes;

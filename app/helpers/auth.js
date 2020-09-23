@@ -4,7 +4,9 @@ import jwtHelper from './jwt';
 import env from '../config/env';
 
 const { APP_URL, APP_PROTOCOL } = env;
-const { Users, Credentials, sequelize } = models;
+const {
+  Users, Credentials, sequelize, Profiles,
+} = models;
 
 /**
  * @name getBaseDomainFromUrl
@@ -121,6 +123,7 @@ const signUp = async (rawUser = {}) => {
   try {
     let newUser = await Users.create(user, { transaction: t });
     await Credentials.create({ password, userId: newUser.id, phoneNumber }, { transaction: t });
+    await Profiles.create({ userId: newUser.id }, { transaction: t }); // Create profile for all new users
     await t.commit();
     newUser = await Users.getDetailById(newUser.id, true);
     reply.user = newUser.get({ plain: true });

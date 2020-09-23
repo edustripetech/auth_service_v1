@@ -65,4 +65,26 @@ describe('Authentication tests', () => {
       .send({ email: newUser.email, password: newUser.password })
       .end(authExpectations(200, 'Ok', done));
   });
+
+  it('Should create a new user with a profile', (done) => {
+    const newUser1 = {
+      email: faker.internet.email(),
+      firstName: faker.name.firstName(),
+      lastName: faker.name.lastName(),
+      userType: faker.random.arrayElement(userTypes),
+      password: '1234567890dy&%$#',
+    };
+    chai
+      .request(server)
+      .post(`${baseAPIUrl}/auth/sign-up`)
+      .send(newUser1)
+      .end((error, response) => {
+        const { status, body: { data = {} }, body } = response || {};
+        expect(status).to.equal(201);
+        expect(body).to.have.keys(['code', 'message', 'data']);
+        expect(data.firstName).to.equal(newUser1.firstName);
+        expect(data.profile.userId).to.equal(data.id);
+        done();
+      });
+  });
 });

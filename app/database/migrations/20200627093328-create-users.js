@@ -9,7 +9,6 @@ module.exports = {
     lastName: { type: Sequelize.STRING, allowNull: false },
     email: {
       type: Sequelize.STRING,
-      allowNull: false,
     },
     userType: {
       type: Sequelize.ENUM(
