@@ -1,11 +1,9 @@
 import fs from 'fs';
 import ejs from 'ejs';
-import util from 'util';
 import path from 'path';
 import 'dotenv/config';
 import nodemailer from 'nodemailer';
 
-const readFileAsync = util.promisify(fs.readFile);
 const templatesDirectory = path.join(__dirname, './../mail/templates');
 /**
  * @class EmailService
@@ -37,10 +35,10 @@ export default class EmailService {
    * @param {object} fileName - The file name of the html template
    * @returns {string} Returns path to html template
    */
-  async init(fileName) {
-    this.mailTemplates = await readFileAsync(
+  init(fileName) {
+    this.mailTemplates = fs.readFileSync(
       path.join(templatesDirectory, `${fileName}.html`),
-      'utf-8'
+      'utf-8',
     );
   }
 
@@ -49,10 +47,13 @@ export default class EmailService {
    * @description A nodemailer function to send mails
    * @param {object} options - The options object
    * @param {object} data - The request data object
+   * @param {Function} callback - The request data object
    * @returns {object} Returns a JSON API response
    */
-  sendEmail(options, data) {
-    let { recipients, from, subject, text, html } = options;
+  sendEmail(options, data, callback = null) {
+    const {
+      recipients, from, subject, text, html,
+    } = options;
     data = data || {};
     if (!(recipients && subject && html)) {
       // eslint-disable-next-line nonblock-statement-body-position
@@ -63,21 +64,22 @@ export default class EmailService {
       to = to.join(',');
     }
 
-    html = ejs.render(html, data);
+    const body = ejs.render(html, data);
 
     options.from = from || process.env.defaultSender;
-    options.text = text || html;
-    options.html = html;
+    options.text = text || body;
+    options.html = body;
     options.to = to;
+    options.subject = subject;
 
     // send mail with defined transport object
-    this.transporter.sendMail(options, (error) => {
+    this.transporter.sendMail(options, (error, info) => {
       if (error) {
         throw Error(error);
       }
-
-      // eslint-disable-next-line no-console
-      console.log('Message sent!');
+      if (callback && {}.toString.call(callback) === '[object Function]') {
+        callback(info);
+      }
     });
   }
 
@@ -89,8 +91,8 @@ export default class EmailService {
    * @param {string} email - The email of recipient
    * @returns {object} Returns a JSON API response
    */
-  async sendTestMail(firstname, messageFile, email) {
-    await this.init(messageFile);
+  sendTestMail(firstname, messageFile, email) {
+    this.init(messageFile);
     const options = {
       recipients: [email],
       subject: 'Test Mail',
@@ -101,5 +103,31 @@ export default class EmailService {
       firstname,
     };
     this.sendEmail(options, data);
+  }
+
+  /**
+   * @function sendWelcomeEmail
+   * @description A function to
+   * @param {Object} user - Recipient
+   * @param {string} user.firstName - The first name of recipient
+   * @param {string} user.email - The first name of recipient
+   * @param {string} verificationUrl - The first name of recipient
+   * @param {Function} callback - The first name of recipient
+   * @param {string} templateFile - The first name of recipient
+   * @returns {object} Returns a JSON API response
+   */
+  async sendWelcomeEmail(user, verificationUrl, callback, templateFile = 'verify-account') {
+    this.init(templateFile);
+    const options = {
+      recipients: [user.email],
+      subject: `${user.firstName}, Welcome to Edustripe`,
+      html: this.mailTemplates,
+    };
+
+    const data = {
+      name: user.firstName,
+      verificationUrl,
+    };
+    this.sendEmail(options, data, callback);
   }
 }

@@ -32,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
   });
   Users.getDetail = function getDetail(user, withCredential = false) {
     const where = user && user.id ? { id: user.id } : { email: user.email };
-    let include = []; // Add all models to be included here
+    let include = ['verification']; // Add all models to be included here
     if (withCredential) include = include.concat('credential');
     return this.findOne({
       where,
@@ -50,6 +50,10 @@ module.exports = (sequelize, DataTypes) => {
     Users.hasOne(models.Credentials, {
       foreignKey: 'userId',
       as: 'credential',
+    });
+    Users.hasOne(models.AccountVerification, {
+      foreignKey: 'accountId',
+      as: 'verification',
     });
   };
   return Users;
