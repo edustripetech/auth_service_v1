@@ -69,7 +69,7 @@ const signIn = async (req, res) => {
 };
 
 /**
- * @name signIn
+ * @name verifyEmail
  * @param {object} req - Express request object
  * @param {object} res - Express response object
  * @return {Object} User object
