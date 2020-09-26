@@ -99,6 +99,7 @@ const JWT = (() => {
     generateTokens,
     renewAccessToken,
     verifyToken,
+    makeToken,
   };
 })();
 

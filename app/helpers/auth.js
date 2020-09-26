@@ -85,7 +85,7 @@ export const setTokensToResponse = (res, tokens, cookieDomain = '') => {
  * @param {Object} res Express response object
  * @param {Object} user
  * @param {string} cookieDomain
- * @return {null} Null
+ * @return {{access: string, refresh: string}} Tokens
  */
 const handlePostAuth = (res, user, cookieDomain) => {
   const tokens = jwtHelper.generateTokens({
@@ -93,6 +93,7 @@ const handlePostAuth = (res, user, cookieDomain) => {
     email: user.email,
   });
   setTokensToResponse(res, tokens, cookieDomain);
+  return tokens;
 };
 
 /**
