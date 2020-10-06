@@ -22,6 +22,13 @@ routes.post('/auth/sign-up', controllers.signUp);
 
 routes.post('/auth/sign-in', controllers.signIn);
 
+routes.post(
+  '/auth/register/schools',
+  // Make this a guard against non-admin users.
+  // guard.requireAuthentication,
+  controllers.registerSchool,
+);
+
 routes.use('/users', guard.requireAuthentication, userRoute);
 routes.use('/email', emailRoute);
 export default routes;

@@ -53,7 +53,24 @@ const signIn = async (req, res) => {
   }
 };
 
+/**
+ * @name registerSchool
+ * @param {object} req - Express request object
+ * @param {object} res - Express response object
+ * @return {Object} School object
+ */
+async function registerSchool(req, res) {
+  try {
+    const school = await authHelper.registerSchool(req.body);
+    return response.created(res, school, 'School registration successful');
+  } catch (e) {
+    const code = (e && e.code) || 500;
+    return response.error(res, 500, e, code, e && e.message);
+  }
+}
+
 export default {
   signIn,
   signUp,
+  registerSchool,
 };

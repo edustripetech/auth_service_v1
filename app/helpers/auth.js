@@ -172,8 +172,19 @@ const signIn = async (user) => {
   return reply;
 };
 
+/**
+ * @name registerSchool
+ * @param {object} school
+ * @returns {object} registered School
+ */
+const registerSchool = async (school) => {
+  // Replace with school registration logic
+  return school;
+};
+
 export default {
   signIn,
   signUp,
   handlePostAuth,
+  registerSchool,
 };
