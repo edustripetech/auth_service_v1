@@ -4,7 +4,9 @@ import jwtHelper from './jwt';
 import env from '../config/env';
 
 const { APP_URL, APP_PROTOCOL } = env;
-const { Users, Credentials, sequelize } = models;
+const {
+  Users, Credentials, School, sequelize,
+} = models;
 
 /**
  * @name getBaseDomainFromUrl
@@ -172,8 +174,44 @@ const signIn = async (user) => {
   return reply;
 };
 
+/**
+ * @name registerSchool
+ * @param {{ name, phoneNumber, email, address }} school - details of the school to be registered
+ * @returns {object} registered School
+ */
+const registerSchool = async ({
+  name,
+  phoneNumber,
+  email,
+  address,
+}) => {
+  const error = new Error();
+  error.name = 'Validation error';
+  error.code = 400;
+
+  if (!name) {
+    error.message = 'name is required';
+    throw error;
+  }
+
+  const existingSchool = await School.findByName(name);
+  if (existingSchool) {
+    error.message = 'school already exists';
+    error.code = 409;
+    throw error;
+  }
+
+  return School.create({
+    name,
+    phoneNumber,
+    email,
+    address,
+  });
+};
+
 export default {
   signIn,
   signUp,
   handlePostAuth,
+  registerSchool,
 };
