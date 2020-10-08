@@ -66,3 +66,6 @@ typings/
 
 # Backups
 db-backup/
+
+# Generated build files
+dist/
